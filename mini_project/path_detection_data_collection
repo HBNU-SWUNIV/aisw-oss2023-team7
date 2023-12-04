@@ -1,0 +1,68 @@
+#Update Directory Creation Code:
+#Create a new directory for each path shape you want to recognize.
+  
+import os
+
+path_shapes = ['O_path', 'Z_path', 'L_path']  # Add more paths as needed
+
+# Create directories
+for shape in path_shapes:
+    dir_path = f'dataset/{shape}'
+    try:
+        os.makedirs(dir_path)
+    except FileExistsError:
+        print(f'Directory {dir_path} not created because it already exists')
+
+
+
+
+#update Button Creation Code:
+#Create a new button and counter for each path shape.
+
+import ipywidgets.widgets as widgets
+from IPython.display import display
+
+button_layout = widgets.Layout(width='128px', height='64px')
+
+# Create buttons and counters
+buttons = {}
+counters = {}
+
+for shape in path_shapes:
+    buttons[shape] = widgets.Button(description=f'add {shape}', layout=button_layout)
+    counters[shape] = widgets.IntText(layout=button_layout, value=len(os.listdir(f'dataset/{shape}')))
+    display(widgets.HBox([counters[shape], buttons[shape]]))
+
+
+
+
+
+
+#Update Image Saving Functions:
+#Create a new image saving function for each path shape.
+from uuid import uuid1
+
+def save_snapshot(directory):
+    image_path = os.path.join(directory, str(uuid1()) + '.jpg')
+    with open(image_path, 'wb') as f:
+        f.write(image.value)
+
+def save_path_shape(shape):
+    global counters
+    dir_path = f'dataset/{shape}'
+    save_snapshot(dir_path)
+    counters[shape].value = len(os.listdir(dir_path))
+
+# Attach callbacks
+for shape in path_shapes:
+    buttons[shape].on_click(lambda x, shape=shape: save_path_shape(shape))
+
+
+
+
+      
+#Display Widgets:
+#You can display the widgets again anytime using the following code:
+# Assuming the previous code has been run to create the buttons and counters
+for shape in path_shapes:
+    display(widgets.HBox([counters[shape], buttons[shape]]))
